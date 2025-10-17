@@ -1,0 +1,56 @@
+[
+  {
+    "Id": 1,
+    "description": "Follow up on software license proposal with Sarah",
+    "dueDate": "2024-01-22",
+    "completed": false,
+    "relatedEntityType": "contact",
+    "relatedEntityId": 1,
+    "createdAt": "2024-01-15T14:30:00Z"
+  },
+  {
+    "Id": 2,
+    "description": "Send technical specifications to Michael",
+    "dueDate": "2024-01-25",
+    "completed": false,
+    "relatedEntityType": "deal",
+    "relatedEntityId": 2,
+    "createdAt": "2024-01-12T10:15:00Z"
+  },
+  {
+    "Id": 3,
+    "description": "Schedule project kickoff meeting with StartupCo",
+    "dueDate": "2024-01-19",
+    "completed": true,
+    "relatedEntityType": "deal",
+    "relatedEntityId": 3,
+    "createdAt": "2024-01-18T09:30:00Z"
+  },
+  {
+    "Id": 4,
+    "description": "Prepare enterprise integration timeline",
+    "dueDate": "2024-01-23",
+    "completed": false,
+    "relatedEntityType": "deal",
+    "relatedEntityId": 4,
+    "createdAt": "2024-01-20T11:45:00Z"
+  },
+  {
+    "Id": 5,
+    "description": "Send thank you note to Lisa",
+    "dueDate": "2024-01-21",
+    "completed": false,
+    "relatedEntityType": "contact",
+    "relatedEntityId": 5,
+    "createdAt": "2024-01-14T15:20:00Z"
+  },
+  {
+    "Id": 6,
+    "description": "Review contract terms with legal team",
+    "dueDate": "2024-01-24",
+    "completed": false,
+    "relatedEntityType": "deal",
+    "relatedEntityId": 1,
+    "createdAt": "2024-01-16T13:15:00Z"
+  }
+]

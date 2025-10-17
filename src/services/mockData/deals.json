@@ -1,0 +1,52 @@
+[
+  {
+    "Id": 1,
+    "name": "TechCorp Software License",
+    "contactId": 1,
+    "value": 25000,
+"status": "negotiation",
+    "notes": "Follow up scheduled for next week to finalize contract terms",
+    "createdAt": "2024-01-10T10:30:00Z",
+    "updatedAt": "2024-01-15T14:20:00Z"
+  },
+  {
+    "Id": 2,
+    "name": "Digital Innovation Consulting",
+    "contactId": 2,
+    "value": 15000,
+"status": "lead",
+    "notes": "Initial contact made, waiting for budget approval",
+    "createdAt": "2024-01-08T14:15:00Z",
+    "updatedAt": "2024-01-12T09:30:00Z"
+  },
+  {
+    "Id": 3,
+    "name": "StartupCo Platform Development",
+    "contactId": 3,
+    "value": 45000,
+"status": "won",
+    "notes": "Deal closed successfully, onboarding scheduled",
+    "createdAt": "2024-01-05T09:45:00Z",
+    "updatedAt": "2024-01-18T16:45:00Z"
+  },
+  {
+    "Id": 4,
+    "name": "Enterprise Integration Project",
+    "contactId": 4,
+    "value": 75000,
+"status": "negotiation",
+    "notes": "Negotiating pricing and delivery timeline",
+    "createdAt": "2024-01-12T16:20:00Z",
+    "updatedAt": "2024-01-20T10:15:00Z"
+  },
+  {
+    "Id": 5,
+    "name": "Growth Analytics Package",
+    "contactId": 5,
+    "value": 8500,
+"status": "lost",
+    "notes": "Lost to competitor due to pricing",
+    "createdAt": "2024-01-09T11:30:00Z",
+    "updatedAt": "2024-01-14T13:45:00Z"
+  }
+]
