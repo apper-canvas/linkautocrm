@@ -45,12 +45,12 @@ setFormData({
   const validateForm = () => {
     const newErrors = {};
     
-    if (!formData.name.trim()) {
+if (!formData.name.trim()) {
       newErrors.name = "Deal name is required";
     }
     
-    if (!formData.contactId) {
-      newErrors.contactId = "Contact is required";
+    if (!formData.contact_id_c) {
+      newErrors.contact_id_c = "Contact is required";
     }
     
     if (!formData.value || formData.value <= 0) {
@@ -75,18 +75,18 @@ const handleSubmit = async (e) => {
       };
       
       // Check if status changed to "won" for existing deal
-      const statusChangedToWon = deal && deal.status !== "won" && formData.status === "won";
+const statusChangedToWon = deal && deal.status !== "won" && formData.status === "won";
+      
+      // Get contact name for both email generation and updates
+      const contact = contacts.find(c => c.Id === parseInt(formData.contact_id_c));
       
       if (statusChangedToWon) {
-        // Get contact name for email generation
-const contact = contacts.find(c => c.Id === parseInt(formData.contact_id_c));
-        dealData.contactName = contact?.name || "Valued Customer";
-        
+        dealData.contactName = contact?.name_c || "Valued Customer";
         toast.info("Generating congratulatory email...");
       }
       
       if (deal) {
-dealData.contactName = contact?.name_c || "Valued Customer";
+        dealData.contactName = contact?.name_c || "Valued Customer";
         await dealService.update(deal.Id, dealData);
         if (statusChangedToWon) {
           toast.success("Deal marked as Won! Congratulatory email generated and added to notes.");
@@ -150,15 +150,14 @@ const handleChange = (field) => (e) => {
         <FormField
           label="Contact *"
           type="select"
-          value={formData.contactId}
-          onChange={handleChange("contactId")}
-          error={errors.contactId}
+value={formData.contact_id_c}
+          onChange={handleChange("contact_id_c")}
+          error={errors.contact_id_c}
         >
           <option value="">Select a contact</option>
 {contacts.map((contact) => (
             <option key={contact.Id} value={contact.Id}>
               {contact.name_c}
-              {contact.name}
             </option>
           ))}
         </FormField>

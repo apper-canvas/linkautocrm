@@ -81,6 +81,7 @@ await contactService.delete(deleteContact.Id);
                       format(new Date(contact.last_contact_date_c), "MMM d, yyyy") : 
                       "-"
                     }
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-2">
                       <Button
