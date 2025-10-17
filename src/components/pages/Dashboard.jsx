@@ -1,11 +1,15 @@
-import { useState, useEffect } from "react";
-import Header from "@/components/organisms/Header";
-import DashboardStats from "@/components/organisms/DashboardStats";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
+import React, { useEffect, useState } from "react";
 import contactService from "@/services/api/contactService";
 import dealService from "@/services/api/dealService";
 import taskService from "@/services/api/taskService";
+import ApperIcon from "@/components/ApperIcon";
+import Header from "@/components/organisms/Header";
+import DashboardStats from "@/components/organisms/DashboardStats";
+import Tasks from "@/components/pages/Tasks";
+import Deals from "@/components/pages/Deals";
+import Contacts from "@/components/pages/Contacts";
+import Loading from "@/components/ui/Loading";
+import Error from "@/components/ui/Error";
 
 const Dashboard = () => {
   const [contacts, setContacts] = useState([]);
@@ -82,23 +86,23 @@ const Dashboard = () => {
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Recent Activity
               </h3>
-              <div className="space-y-3">
+<div className="space-y-3">
                 <div className="flex items-center space-x-3 text-sm">
                   <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
                   <span className="text-gray-600">
-                    {contacts.length} contacts in your database
+{contacts.length} contacts in your database
                   </span>
                 </div>
                 <div className="flex items-center space-x-3 text-sm">
                   <div className="h-2 w-2 bg-green-500 rounded-full"></div>
                   <span className="text-gray-600">
-                    {deals.filter(d => d.status === "won").length} deals won
+                    {deals.filter(d => d.status_c === "won").length} deals won
                   </span>
                 </div>
                 <div className="flex items-center space-x-3 text-sm">
                   <div className="h-2 w-2 bg-orange-500 rounded-full"></div>
                   <span className="text-gray-600">
-                    {tasks.filter(t => !t.completed).length} tasks pending
+                    {tasks.filter(t => !t.completed_c).length} tasks pending
                   </span>
                 </div>
               </div>

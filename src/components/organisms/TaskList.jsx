@@ -1,44 +1,44 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { format, isAfter, isBefore, isToday } from "date-fns";
 import { toast } from "react-toastify";
+import taskService from "@/services/api/taskService";
+import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 import ConfirmDialog from "@/components/molecules/ConfirmDialog";
-import { cn } from "@/utils/cn";
-import taskService from "@/services/api/taskService";
 
 const TaskList = ({ tasks, contacts, deals, onEdit, onRefresh }) => {
   const [deleteTask, setDeleteTask] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const getRelatedEntityName = (task) => {
-    if (task.relatedEntityType === "contact") {
-      const contact = contacts.find(c => c.Id === parseInt(task.relatedEntityId));
-      return contact?.name || "Unknown Contact";
-    } else if (task.relatedEntityType === "deal") {
-      const deal = deals.find(d => d.Id === parseInt(task.relatedEntityId));
-      return deal?.name || "Unknown Deal";
+if (task.related_entity_type_c === "contact") {
+      const contact = contacts.find(c => c.Id === parseInt(task.related_entity_id_c));
+      return contact?.name_c || "Unknown Contact";
+    } else if (task.related_entity_type_c === "deal") {
+      const deal = deals.find(d => d.Id === parseInt(task.related_entity_id_c));
+      return deal?.name_c || "Unknown Deal";
     }
     return "";
   };
 
-  const getTaskPriority = (task) => {
-    const dueDate = new Date(task.dueDate);
+const getTaskPriority = (task) => {
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
     
-    if (task.completed) return "completed";
+    const dueDate = new Date(task.due_date_c);
     if (isBefore(dueDate, today)) return "overdue";
     if (isToday(dueDate)) return "today";
     return "upcoming";
   };
 
-  const handleToggleComplete = async (task) => {
+const handleToggleComplete = async (task) => {
     try {
       await taskService.update(task.Id, { 
-        ...task, 
-        completed: !task.completed 
+        ...task,
+        completed_c: !task.completed_c
       });
-      toast.success(task.completed ? "Task marked as incomplete" : "Task completed!");
+      toast.success(task.completed_c ? "Task marked as incomplete" : "Task completed!");
       onRefresh();
     } catch (error) {
       toast.error("Failed to update task");
@@ -50,7 +50,7 @@ const TaskList = ({ tasks, contacts, deals, onEdit, onRefresh }) => {
     
     setLoading(true);
     try {
-      await taskService.delete(deleteTask.Id);
+await taskService.delete(deleteTask.Id);
       toast.success("Task deleted successfully");
       onRefresh();
     } catch (error) {
@@ -75,61 +75,63 @@ const TaskList = ({ tasks, contacts, deals, onEdit, onRefresh }) => {
           const priority = getTaskPriority(task);
           return (
             <div
-              key={task.Id}
-              className={cn(
-                "p-4 rounded-lg border-l-4 transition-all hover:shadow-sm",
-                priorityStyles[priority]
-              )}
+key={task.Id}
+              className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow"
             >
-              <div className="flex items-start justify-between">
-                <div className="flex items-start space-x-3 flex-1">
-                  <button
-                    onClick={() => handleToggleComplete(task)}
+              <div className="flex items-start gap-3">
+                <button
+                  onClick={() => handleToggleComplete(task)}
+                  className="mt-1 flex-shrink-0"
+                >
+                  <div
                     className={cn(
-                      "mt-1 h-5 w-5 rounded border-2 flex items-center justify-center transition-colors",
-                      task.completed
+                      "h-5 w-5 rounded border-2 flex items-center justify-center transition-colors",
+                      task.completed_c
                         ? "bg-success-500 border-success-500 text-white"
-                        : "border-gray-300 hover:border-primary-500"
+                        : "border-gray-300 hover:border-success-500"
                     )}
                   >
-                    {task.completed && (
-                      <ApperIcon name="Check" className="h-3 w-3" />
-                    )}
-                  </button>
-                  
-                  <div className="flex-1">
-                    <p className={cn(
-                      "text-sm font-medium",
-                      task.completed 
-                        ? "text-gray-500 line-through" 
-                        : "text-gray-900"
-                    )}>
-                      {task.description}
-                    </p>
-                    
-                    <div className="mt-1 flex items-center space-x-4 text-xs text-gray-500">
-                      <span>
-                        Due: {format(new Date(task.dueDate), "MMM d, yyyy")}
-                      </span>
-                      {getRelatedEntityName(task) && (
-                        <span>
-                          Related to: {getRelatedEntityName(task)}
-                        </span>
+                    {task.completed_c && <ApperIcon name="Check" size={14} />}
+                  </div>
+                </button>
+ 
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <p
+                      className={cn(
+                        "text-sm font-medium",
+                        task.completed_c 
+                          ? "text-gray-500 line-through" 
+                          : "text-gray-900"
                       )}
-                    </div>
+                    >
+                      {task.description_c}
+                    </p>
+                  </div>
+                  <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                    <span className="flex items-center gap-1">
+                      <ApperIcon name="Calendar" size={14} />
+                      Due: {format(new Date(task.due_date_c), "MMM d, yyyy")}
+                    </span>
+                    {getRelatedEntityName(task) && (
+                      <span className="flex items-center gap-1">
+                        <ApperIcon name="Link" size={14} />
+                        {getRelatedEntityName(task)}
+                      </span>
+                    )}
                   </div>
                 </div>
-                
-                <div className="flex items-center space-x-2">
-                  {priority === "overdue" && !task.completed && (
-                    <span className="text-xs font-medium text-error-600 bg-error-100 px-2 py-1 rounded">
+ 
+                <div className="flex items-center gap-1">
+                  {priority === "overdue" && !task.completed_c && (
+                    <Badge variant="error" className="text-xs">
                       Overdue
-                    </span>
+                    </Badge>
                   )}
-                  {priority === "today" && !task.completed && (
-                    <span className="text-xs font-medium text-warning-600 bg-warning-100 px-2 py-1 rounded">
-                      Due Today
-                    </span>
+                  {priority === "today" && !task.completed_c && (
+                    <Badge variant="warning" className="text-xs">
+                      Today
+                    </Badge>
                   )}
                   
                   <Button
@@ -137,7 +139,7 @@ const TaskList = ({ tasks, contacts, deals, onEdit, onRefresh }) => {
                     size="sm"
                     onClick={() => onEdit(task)}
                   >
-                    <ApperIcon name="Edit" className="h-4 w-4" />
+                    <ApperIcon name="Edit" size={16} />
                   </Button>
                   <Button
                     variant="ghost"

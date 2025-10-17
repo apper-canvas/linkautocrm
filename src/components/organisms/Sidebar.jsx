@@ -1,4 +1,5 @@
-import { NavLink } from "react-router-dom";
+import { NavLink } from 'react-router-dom';
+import { useAuth } from '@/layouts/Root';
 import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
 

@@ -1,10 +1,10 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
+import contactService from "@/services/api/contactService";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 import ConfirmDialog from "@/components/molecules/ConfirmDialog";
-import contactService from "@/services/api/contactService";
 
 const ContactTable = ({ contacts, onEdit, onRefresh }) => {
   const [deleteContact, setDeleteContact] = useState(null);
@@ -15,7 +15,7 @@ const ContactTable = ({ contacts, onEdit, onRefresh }) => {
     
     setLoading(true);
     try {
-      await contactService.delete(deleteContact.Id);
+await contactService.delete(deleteContact.Id);
       toast.success("Contact deleted successfully");
       onRefresh();
     } catch (error) {
@@ -52,33 +52,35 @@ const ContactTable = ({ contacts, onEdit, onRefresh }) => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {contacts.map((contact) => (
-                <tr key={contact.Id} className="hover:bg-gray-50 transition-colors">
+<tr key={contact.Id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="h-8 w-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-medium text-white">
-                          {contact.name?.charAt(0) || "?"}
+                      <div className="flex-shrink-0 h-10 w-10">
+                        <span className="h-10 w-10 rounded-full bg-primary-500 flex items-center justify-center text-white font-medium">
+                          {contact.name_c?.charAt(0) || "?"}
                         </span>
                       </div>
-                      <div className="ml-3">
+                      <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">
-                          {contact.name}
+                          {contact.name_c}
                         </div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {contact.company || "-"}
+                    {contact.company_c}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {contact.email || "-"}
+                    {contact.email_c}
+                  </td>
+<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {contact.phone_c}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {contact.lastContactDate ? 
-                      format(new Date(contact.lastContactDate), "MMM d, yyyy") : 
+                    {contact.last_contact_date_c ?
+                      format(new Date(contact.last_contact_date_c), "MMM d, yyyy") : 
                       "-"
                     }
-                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-2">
                       <Button
@@ -110,7 +112,7 @@ const ContactTable = ({ contacts, onEdit, onRefresh }) => {
         onClose={() => setDeleteContact(null)}
         onConfirm={handleDelete}
         title="Delete Contact"
-        message={`Are you sure you want to delete ${deleteContact?.name}? This action cannot be undone.`}
+message={`Are you sure you want to delete ${deleteContact?.name_c}? This action cannot be undone.`}
         confirmLabel={loading ? "Deleting..." : "Delete"}
         variant="danger"
       />

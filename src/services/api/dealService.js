@@ -1,142 +1,223 @@
-import dealsData from "@/services/mockData/deals.json";
+import { getApperClient } from "@/services/apperClient";
 
 class DealService {
-  constructor() {
-    this.storageKey = "autocrm_deals";
-    this.initializeData();
-  }
+  async getAll() {
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error("ApperClient not initialized");
+      }
 
-  initializeData() {
-    const existingData = localStorage.getItem(this.storageKey);
-    if (!existingData) {
-      localStorage.setItem(this.storageKey, JSON.stringify(dealsData));
+      const response = await apperClient.fetchRecords("deal_c", {
+        fields: [
+          { field: { Name: "name_c" } },
+          { field: { Name: "value_c" } },
+          { field: { Name: "status_c" } },
+          { field: { Name: "notes_c" } },
+          { 
+            field: { name: "contact_id_c" }, 
+            referenceField: { field: { Name: "name_c" } } 
+          }
+        ]
+      });
+
+      if (!response.success) {
+        console.error("Failed to fetch deals:", response.message);
+        return [];
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching deals:", error.message);
+      return [];
     }
   }
 
-  getData() {
-    const data = localStorage.getItem(this.storageKey);
-    return data ? JSON.parse(data) : [];
-  }
-
-  saveData(deals) {
-    localStorage.setItem(this.storageKey, JSON.stringify(deals));
-  }
-
-  async getAll() {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const deals = this.getData();
-        resolve([...deals]);
-      }, 250);
-    });
-  }
-
   async getById(id) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const deals = this.getData();
-        const deal = deals.find(d => d.Id === parseInt(id));
-        resolve(deal ? { ...deal } : null);
-      }, 200);
-    });
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error("ApperClient not initialized");
+      }
+
+      const response = await apperClient.getRecordById("deal_c", parseInt(id), {
+        fields: [
+          { field: { Name: "name_c" } },
+          { field: { Name: "value_c" } },
+          { field: { Name: "status_c" } },
+          { field: { Name: "notes_c" } },
+          { 
+            field: { name: "contact_id_c" }, 
+            referenceField: { field: { Name: "name_c" } } 
+          }
+        ]
+      });
+
+      if (!response.success) {
+        console.error("Failed to fetch deal:", response.message);
+        return null;
+      }
+
+      return response.data || null;
+    } catch (error) {
+      console.error("Error fetching deal:", error.message);
+      return null;
+    }
   }
 
   async create(dealData) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const deals = this.getData();
-        const maxId = Math.max(...deals.map(d => d.Id), 0);
-const newDeal = {
-          ...dealData,
-          Id: maxId + 1,
-          notes: dealData.notes || "",
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-        deals.push(newDeal);
-        this.saveData(deals);
-        resolve({ ...newDeal });
-      }, 300);
-    });
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error("ApperClient not initialized");
+      }
+
+      const payload = {
+        records: [{
+          name_c: dealData.name_c || "",
+          contact_id_c: parseInt(dealData.contact_id_c),
+          value_c: parseFloat(dealData.value_c),
+          status_c: dealData.status_c || "lead",
+          notes_c: dealData.notes_c || ""
+        }]
+      };
+
+      const response = await apperClient.createRecord("deal_c", payload);
+
+      if (!response.success) {
+        console.error("Failed to create deal:", response.message);
+        return null;
+      }
+
+      if (response.results && response.results.length > 0) {
+        const result = response.results[0];
+        if (result.success) {
+          return result.data;
+        } else {
+          console.error("Failed to create deal:", result.message);
+          return null;
+        }
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error creating deal:", error.message);
+      return null;
+    }
   }
 
-async update(id, dealData) {
-    return new Promise(async (resolve, reject) => {
-      setTimeout(async () => {
-        try {
-          const deals = this.getData();
-          const index = deals.findIndex(d => d.Id === parseInt(id));
-          if (index !== -1) {
-            const oldStatus = deals[index].status;
-            const newStatus = dealData.status;
-            
-            deals[index] = { 
-              ...deals[index], 
-              ...dealData,
-              notes: dealData.notes || "",
-              updatedAt: new Date().toISOString()
-            };
-            
-// Check if status changed to "won" and generate email
-            if (oldStatus !== "won" && newStatus === "won") {
-              try {
-                // Initialize ApperClient only when needed
-                if (!window.ApperSDK || !window.ApperSDK.ApperClient) {
-                  throw new Error("ApperSDK not loaded");
-                }
-                
-                const { ApperClient } = window.ApperSDK;
-                const apperClient = new ApperClient({
-                  apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
-                  apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
-                });
-                
-                const result = await apperClient.functions.invoke(
-                  import.meta.env.VITE_GENERATE_DEAL_EMAIL,
-                  {
-                    body: JSON.stringify({
-                      dealName: deals[index].name,
-                      dealValue: deals[index].value,
-                      contactName: dealData.contactName || "Valued Customer"
-                    }),
-                    headers: {
-                      "Content-Type": "application/json"
-                    }
-                  }
-                );
+  async update(id, dealData) {
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error("ApperClient not initialized");
+      }
 
-                if (result.success === false) {
-                  console.info(`apper_info: Got an error in this function: ${import.meta.env.VITE_GENERATE_DEAL_EMAIL}. The response body is: ${JSON.stringify(result)}.`);
-                } else if (result.success && result.email) {
-                  const timestamp = new Date().toLocaleString();
-                  const emailSection = `\n\n--- AI Generated Email (${timestamp}) ---\n${result.email}\n--- End of Generated Email ---`;
-                  deals[index].notes = (deals[index].notes || "") + emailSection;
-                }
-              } catch (error) {
-                console.info(`apper_info: Got this error in this function: ${import.meta.env.VITE_GENERATE_DEAL_EMAIL}. The error is: ${error.message}`);
+      // Get current deal to check status change
+      const currentDeal = await this.getById(id);
+      const oldStatus = currentDeal?.status_c;
+      const newStatus = dealData.status_c;
+
+      const payload = {
+        records: [{
+          Id: parseInt(id),
+          name_c: dealData.name_c,
+          contact_id_c: parseInt(dealData.contact_id_c),
+          value_c: parseFloat(dealData.value_c),
+          status_c: dealData.status_c,
+          notes_c: dealData.notes_c || ""
+        }]
+      };
+
+      // Check if status changed to "won" and generate email
+      if (oldStatus !== "won" && newStatus === "won") {
+        try {
+          if (!window.ApperSDK || !window.ApperSDK.ApperClient) {
+            throw new Error("ApperSDK not loaded");
+          }
+
+          const { ApperClient } = window.ApperSDK;
+          const emailClient = new ApperClient({
+            apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+            apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+          });
+
+          const result = await emailClient.functions.invoke(
+            import.meta.env.VITE_GENERATE_DEAL_EMAIL,
+            {
+              body: JSON.stringify({
+                dealName: dealData.name_c,
+                dealValue: dealData.value_c,
+                contactName: dealData.contactName || "Valued Customer"
+              }),
+              headers: {
+                "Content-Type": "application/json"
               }
             }
-            
-            this.saveData(deals);
-            resolve({ ...deals[index] });
-          } else {
-            resolve(null);
+          );
+
+          if (result.success === false) {
+            console.info(`apper_info: Got an error in this function: ${import.meta.env.VITE_GENERATE_DEAL_EMAIL}. The response body is: ${JSON.stringify(result)}.`);
+          } else if (result.success && result.email) {
+            const timestamp = new Date().toLocaleString();
+            const emailSection = `\n\n--- AI Generated Email (${timestamp}) ---\n${result.email}\n--- End of Generated Email ---`;
+            payload.records[0].notes_c = (dealData.notes_c || "") + emailSection;
           }
         } catch (error) {
-          reject(error);
+          console.info(`apper_info: Got this error in this function: ${import.meta.env.VITE_GENERATE_DEAL_EMAIL}. The error is: ${error.message}`);
         }
-      }, 300);
-    });
+      }
+
+      const response = await apperClient.updateRecord("deal_c", payload);
+
+      if (!response.success) {
+        console.error("Failed to update deal:", response.message);
+        return null;
+      }
+
+      if (response.results && response.results.length > 0) {
+        const result = response.results[0];
+        if (result.success) {
+          return result.data;
+        } else {
+          console.error("Failed to update deal:", result.message);
+          return null;
+        }
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error updating deal:", error.message);
+      return null;
+    }
   }
+
   async delete(id) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const deals = this.getData();
-        const filteredDeals = deals.filter(d => d.Id !== parseInt(id));
-        this.saveData(filteredDeals);
-        resolve(true);
-      }, 250);
-    });
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        throw new Error("ApperClient not initialized");
+      }
+
+      const response = await apperClient.deleteRecord("deal_c", {
+        RecordIds: [parseInt(id)]
+      });
+
+      if (!response.success) {
+        console.error("Failed to delete deal:", response.message);
+        return false;
+      }
+
+      if (response.results && response.results.length > 0) {
+        const result = response.results[0];
+        return result.success;
+      }
+
+      return false;
+    } catch (error) {
+      console.error("Error deleting deal:", error.message);
+      return false;
+    }
   }
 }
 

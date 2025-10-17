@@ -13,32 +13,32 @@ const DealForm = ({
   onSuccess 
 }) => {
 const [formData, setFormData] = useState({
-    name: "",
-    contactId: "",
-    value: "",
-    status: "lead",
-    notes: ""
+    name_c: "",
+    contact_id_c: "",
+    value_c: "",
+    status_c: "lead",
+    notes_c: ""
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
   // Update form data when deal prop changes
   useEffect(() => {
-    if (deal) {
+if (deal) {
       setFormData({
-        name: deal.name || "",
-        contactId: deal.contactId || "",
-        value: deal.value || "",
-status: deal.status || "lead",
-        notes: deal.notes || ""
+        name_c: deal.name_c || "",
+        contact_id_c: deal.contact_id_c?.Id || deal.contact_id_c || "",
+        value_c: deal.value_c || "",
+        status_c: deal.status_c || "lead",
+        notes_c: deal.notes_c || ""
       });
     } else {
-      setFormData({
-        name: "",
-        contactId: "",
-        value: "",
-status: "lead",
-        notes: ""
+setFormData({
+        name_c: "",
+        contact_id_c: "",
+        value_c: "",
+        status_c: "lead",
+        notes_c: ""
       });
     }
   }, [deal]);
@@ -69,9 +69,9 @@ const handleSubmit = async (e) => {
     setLoading(true);
     try {
       const dealData = {
-        ...formData,
-        contactId: parseInt(formData.contactId),
-        value: parseFloat(formData.value)
+...formData,
+        contact_id_c: parseInt(formData.contact_id_c),
+        value_c: parseFloat(formData.value_c)
       };
       
       // Check if status changed to "won" for existing deal
@@ -79,13 +79,14 @@ const handleSubmit = async (e) => {
       
       if (statusChangedToWon) {
         // Get contact name for email generation
-        const contact = contacts.find(c => c.Id === parseInt(formData.contactId));
+const contact = contacts.find(c => c.Id === parseInt(formData.contact_id_c));
         dealData.contactName = contact?.name || "Valued Customer";
         
         toast.info("Generating congratulatory email...");
       }
       
       if (deal) {
+dealData.contactName = contact?.name_c || "Valued Customer";
         await dealService.update(deal.Id, dealData);
         if (statusChangedToWon) {
           toast.success("Deal marked as Won! Congratulatory email generated and added to notes.");
@@ -102,11 +103,11 @@ const handleSubmit = async (e) => {
       
       // Reset form
       setFormData({
-        name: "",
-        contactId: "",
-        value: "",
-        status: "lead",
-        notes: ""
+name_c: "",
+        contact_id_c: "",
+        value_c: "",
+        status_c: "lead",
+        notes_c: ""
       });
     } catch (error) {
       toast.error(`Failed to ${deal ? "update" : "create"} deal`);
@@ -154,8 +155,9 @@ const handleChange = (field) => (e) => {
           error={errors.contactId}
         >
           <option value="">Select a contact</option>
-          {contacts.map((contact) => (
+{contacts.map((contact) => (
             <option key={contact.Id} value={contact.Id}>
+              {contact.name_c}
               {contact.name}
             </option>
           ))}

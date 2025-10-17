@@ -34,10 +34,10 @@ apper.serve(async (req) => {
       );
     }
 
-    const { dealName, dealValue, contactName } = body;
+const { dealName, dealValue, contactName } = body;
 
     // Validate required fields
-    if (!dealName || !dealValue || !contactName) {
+    if (!dealName || dealValue === undefined || dealValue === null || !contactName) {
       return new Response(
         JSON.stringify({
           success: false,

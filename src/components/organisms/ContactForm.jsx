@@ -12,11 +12,11 @@ const ContactForm = ({
   onSuccess 
 }) => {
   const [formData, setFormData] = useState({
-    name: contact?.name || "",
-    company: contact?.company || "",
-    email: contact?.email || "",
-    phone: contact?.phone || "",
-    lastContactDate: contact?.lastContactDate || ""
+name_c: contact?.name_c || "",
+    company_c: contact?.company_c || "",
+    email_c: contact?.email_c || "",
+    phone_c: contact?.phone_c || "",
+    last_contact_date_c: contact?.last_contact_date_c || ""
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -44,7 +44,7 @@ const ContactForm = ({
     setLoading(true);
     try {
       if (contact) {
-        await contactService.update(contact.Id, formData);
+await contactService.update(contact.Id, formData);
         toast.success("Contact updated successfully");
       } else {
         await contactService.create(formData);
@@ -55,12 +55,12 @@ const ContactForm = ({
       onClose();
       
       // Reset form
-      setFormData({
-        name: "",
-        company: "",
-        email: "",
-        phone: "",
-        lastContactDate: ""
+setFormData({
+        name_c: "",
+        company_c: "",
+        email_c: "",
+        phone_c: "",
+        last_contact_date_c: ""
       });
     } catch (error) {
       toast.error(`Failed to ${contact ? "update" : "create"} contact`);

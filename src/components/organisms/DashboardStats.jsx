@@ -3,13 +3,13 @@ import { cn } from "@/utils/cn";
 
 const DashboardStats = ({ contacts, deals, tasks }) => {
   const totalContacts = contacts.length;
-  const activeDeals = deals.filter(deal => 
-    deal.status === "lead" || deal.status === "negotiation"
+const activeDeals = deals.filter(deal => 
+    deal.status_c === "lead" || deal.status_c === "negotiation"
   ).length;
   const totalDealValue = deals
-    .filter(deal => deal.status !== "lost")
-    .reduce((sum, deal) => sum + deal.value, 0);
-  const pendingTasks = tasks.filter(task => !task.completed).length;
+    .filter(deal => deal.status_c !== "lost")
+    .reduce((sum, deal) => sum + (deal.value_c || 0), 0);
+const pendingTasks = tasks.filter(task => !task.completed_c).length;
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-US", {

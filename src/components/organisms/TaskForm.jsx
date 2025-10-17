@@ -13,12 +13,12 @@ const TaskForm = ({
   deals = [],
   onSuccess 
 }) => {
-  const [formData, setFormData] = useState({
-    description: task?.description || "",
-    dueDate: task?.dueDate || "",
-    completed: task?.completed || false,
-    relatedEntityType: task?.relatedEntityType || "contact",
-    relatedEntityId: task?.relatedEntityId || ""
+const [formData, setFormData] = useState({
+    description_c: task?.description_c || "",
+    due_date_c: task?.due_date_c || "",
+    completed_c: task?.completed_c || false,
+    related_entity_type_c: task?.related_entity_type_c || "contact",
+    related_entity_id_c: task?.related_entity_id_c || ""
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -47,12 +47,12 @@ const TaskForm = ({
     try {
       const taskData = {
         ...formData,
-        relatedEntityId: formData.relatedEntityId ? 
-          parseInt(formData.relatedEntityId) : null
+related_entity_id_c: formData.related_entity_id_c ? 
+          parseInt(formData.related_entity_id_c) : null
       };
       
       if (task) {
-        await taskService.update(task.Id, taskData);
+await taskService.update(task.Id, taskData);
         toast.success("Task updated successfully");
       } else {
         await taskService.create(taskData);
@@ -63,12 +63,12 @@ const TaskForm = ({
       onClose();
       
       // Reset form
-      setFormData({
-        description: "",
-        dueDate: "",
-        completed: false,
-        relatedEntityType: "contact",
-        relatedEntityId: ""
+setFormData({
+        description_c: "",
+        due_date_c: "",
+        completed_c: false,
+        related_entity_type_c: "contact",
+        related_entity_id_c: ""
       });
     } catch (error) {
       toast.error(`Failed to ${task ? "update" : "create"} task`);
@@ -160,8 +160,8 @@ const TaskForm = ({
         >
           <option value="">None</option>
           {getRelatedEntities().map((entity) => (
-            <option key={entity.Id} value={entity.Id}>
-              {entity.name}
+<option key={entity.Id} value={entity.Id}>
+              {entity.name_c}
             </option>
           ))}
         </FormField>
