@@ -5,8 +5,8 @@ import taskService from "@/services/api/taskService";
 import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
+import Badge from "@/components/atoms/Badge";
 import ConfirmDialog from "@/components/molecules/ConfirmDialog";
-
 const TaskList = ({ tasks, contacts, deals, onEdit, onRefresh }) => {
   const [deleteTask, setDeleteTask] = useState(null);
   const [loading, setLoading] = useState(false);
