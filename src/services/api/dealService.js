@@ -8,14 +8,14 @@ class DealService {
         throw new Error("ApperClient not initialized");
       }
 
-      const response = await apperClient.fetchRecords("deal_c", {
+const response = await apperClient.fetchRecords("deal_c", {
         fields: [
           { field: { Name: "name_c" } },
           { field: { Name: "value_c" } },
           { field: { Name: "status_c" } },
           { field: { Name: "notes_c" } },
           { 
-            field: { name: "contact_id_c" }, 
+            field: { Name: "contact_id_c" }, 
             referenceField: { field: { Name: "name_c" } } 
           }
         ]
@@ -40,14 +40,14 @@ class DealService {
         throw new Error("ApperClient not initialized");
       }
 
-      const response = await apperClient.getRecordById("deal_c", parseInt(id), {
+const response = await apperClient.getRecordById("deal_c", parseInt(id), {
         fields: [
           { field: { Name: "name_c" } },
           { field: { Name: "value_c" } },
           { field: { Name: "status_c" } },
           { field: { Name: "notes_c" } },
           { 
-            field: { name: "contact_id_c" }, 
+            field: { Name: "contact_id_c" }, 
             referenceField: { field: { Name: "name_c" } } 
           }
         ]
