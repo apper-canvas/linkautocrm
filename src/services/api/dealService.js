@@ -82,7 +82,7 @@ class DealService {
         }]
       };
 
-      const response = await apperClient.createRecord("deal_c", payload);
+const response = await apperClient.createRecord("deal_c", payload);
 
       if (!response.success) {
         console.error("Failed to create deal:", response.message);
@@ -92,7 +92,9 @@ class DealService {
       if (response.results && response.results.length > 0) {
         const result = response.results[0];
         if (result.success) {
-          return result.data;
+          // Fetch the complete deal record to ensure all fields are populated
+          const createdDeal = await this.getById(result.data.Id);
+          return createdDeal;
         } else {
           console.error("Failed to create deal:", result.message);
           return null;
